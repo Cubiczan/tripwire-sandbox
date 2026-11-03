@@ -25,7 +25,7 @@ def index(): return FileResponse(STATIC / "index.html")
 @app.get("/status")
 def status():
     return {"llm_mode": llm.mode(), "llm_base_url": llm.VULTR_BASE_URL, "model": llm.DEFAULT_MODEL,
-            "docker": sandbox.docker_available(), "sandbox_image": sandbox.IMAGE,
+            "docker": sandbox.docker_available(), "sandbox_mode": sandbox.mode(), "sandbox_image": sandbox.IMAGE,
             "note": "mock = offline canned model output, not Vultr inference" if llm.mode() == "mock" else "live Vultr inference"}
 
 

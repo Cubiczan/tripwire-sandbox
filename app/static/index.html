@@ -13,7 +13,7 @@ table{border-collapse:collapse}td,th{border:1px solid #333;padding:4px 8px;font-
 <script>
 async function j(u,o){const r=await fetch(u,o);return r.json()}
 async function st(){const s=await j('/status');document.getElementById('status').innerHTML=
- `LLM: <span class="${s.llm_mode=='mock'?'mock':''}">${s.llm_mode.toUpperCase()}</span> via ${s.llm_base_url} · docker: ${s.docker} · <i>${s.note}</i>`}
+ `LLM: <span class="${s.llm_mode=='mock'?'mock':''}">${s.llm_mode.toUpperCase()}</span> via ${s.llm_base_url} · docker: ${s.docker} · <i>${s.note}</i>`+(s.sandbox_mode=='replay'?'<div class="mock" style="margin-top:6px">SANDBOX: REPLAY. This public host has no Docker, so sandbox results are replayed from a recorded real local Docker run of the same mock code. Policy gate and approvals run live. Not deployed on Vultr.</div>':'')}
 async function go(s){document.getElementById('out').textContent='running in a fresh container…';
  const r=await j('/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s})});
  r.attempts.forEach(a=>delete a.code);document.getElementById('out').textContent=JSON.stringify(r,null,2);refresh()}

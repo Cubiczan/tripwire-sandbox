@@ -40,12 +40,46 @@ def build_argv(name: str, lim: Limits) -> list[str]:
 
 
 def docker_available() -> bool:
-    if not shutil.which(DOCKER):
+    if os.getenv("FORCE_REPLAY") == "1" or not shutil.which(DOCKER):
         return False
     return subprocess.run([DOCKER, "info"], capture_output=True).returncode == 0
 
 
+REPLAY_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "sandbox_replay.json")
+RECORD = os.getenv("SANDBOX_RECORD") == "1"
+
+
+def _key(code: str) -> str:
+    import hashlib
+    return hashlib.sha256(code.encode()).hexdigest()[:16]
+
+
+def mode() -> str:
+    """'docker' = real throwaway containers. 'replay' = no Docker on this host (e.g. the free public demo host):
+    results are REPLAYED from a recorded real local Docker run of the same deterministic mock code."""
+    return "docker" if docker_available() else "replay"
+
+
+def _replay(code: str) -> Result:
+    db = json.load(open(REPLAY_FILE))
+    r = db.get(_key(code))
+    if r is None:
+        return Result("replay-miss", 1, "", "REPLAY mode: no recorded Docker run for this code", False, True, [])
+    r = dict(r); r["container"] = "replay-of-" + r["container"]
+    return Result(**r)
+
+
 def run(code: str, data: dict, lim: Limits | None = None) -> Result:
+    if not docker_available():
+        return _replay(code)
+    res = _run_docker(code, data, lim)
+    if RECORD:
+        db = json.load(open(REPLAY_FILE)) if os.path.exists(REPLAY_FILE) else {}
+        db[_key(code)] = res.to_dict(); json.dump(db, open(REPLAY_FILE, "w"), indent=1)
+    return res
+
+
+def _run_docker(code: str, data: dict, lim: Limits | None = None) -> Result:
     lim = lim or Limits()
     name = f"tw-sbx-{uuid.uuid4().hex[:12]}"
     argv = build_argv(name, lim)
