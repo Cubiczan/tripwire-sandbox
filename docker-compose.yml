@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .
+    ports: ["80:8000"]
+    env_file: [.env]          # VULTR_INFERENCE_API_KEY lives ONLY in the app container, never the sandbox
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock   # needed to launch sandbox containers; see README "Trust boundary"
+    restart: unless-stopped

@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Tripwire Sandbox</title>
+<style>body{font-family:system-ui;margin:24px;background:#0f1419;color:#e6e6e6}button{margin:4px;padding:8px 12px;border-radius:6px;border:0;background:#2b6cb0;color:#fff;cursor:pointer}
+pre{background:#1a2129;padding:10px;border-radius:6px;max-height:320px;overflow:auto;font-size:12px}.mock{background:#b7791f;padding:2px 8px;border-radius:4px}
+table{border-collapse:collapse}td,th{border:1px solid #333;padding:4px 8px;font-size:13px}.ok{color:#68d391}.bad{color:#fc8181}</style></head><body>
+<h2>Tripwire Sandbox <small>AP reconciliation agent, contained</small></h2>
+<div id="status"></div>
+<div><button onclick="go('recon')">Run reconciliation</button><button onclick="go('retry')">Run with retry (buggy 1st attempt)</button>
+<button onclick="go('escape')" style="background:#c53030">Containment demo: network + secrets</button>
+<button onclick="go('forkbomb')" style="background:#c53030">Fork bomb</button><button onclick="go('hang')" style="background:#c53030">Runaway loop</button></div>
+<h3>Result</h3><pre id="out">—</pre>
+<h3>Payments awaiting a person</h3><table id="ap"></table>
+<h3>Audit log</h3><pre id="log"></pre>
+<script>
+async function j(u,o){const r=await fetch(u,o);return r.json()}
+async function st(){const s=await j('/status');document.getElementById('status').innerHTML=
+ `LLM: <span class="${s.llm_mode=='mock'?'mock':''}">${s.llm_mode.toUpperCase()}</span> via ${s.llm_base_url} · docker: ${s.docker} · <i>${s.note}</i>`}
+async function go(s){document.getElementById('out').textContent='running in a fresh container…';
+ const r=await j('/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scenario:s})});
+ r.attempts.forEach(a=>delete a.code);document.getElementById('out').textContent=JSON.stringify(r,null,2);refresh()}
+async function decide(id,ok){await j('/approvals/'+id,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({approve:ok,approver:'CFO'})});refresh()}
+async function refresh(){const a=await j('/approvals');document.getElementById('ap').innerHTML='<tr><th>bill</th><th>vendor</th><th>amount</th><th>reason</th><th>policy</th><th>status</th><th></th></tr>'+
+ a.map(x=>`<tr><td>${x.bill_id}</td><td>${x.vendor_id}</td><td>${x.amount}</td><td>${x.reason}</td><td>${x.policy} ${x.policy_reasons.join(',')}</td><td>${x.status}</td><td>${x.status=='awaiting_human'?`<button onclick="decide('${x.approval_id}',true)">Approve</button><button onclick="decide('${x.approval_id}',false)">Reject</button>`:''}</td></tr>`).join('');
+ const l=await j('/log');document.getElementById('log').innerHTML=l.slice().reverse().map(e=>{const c=e.kind.startsWith('containment_blocked')?'ok':e.kind.includes('FAILED')?'bad':'';return `<span class="${c}">${JSON.stringify(e)}</span>`}).join('\n')}
+st();refresh();
+</script></body></html>

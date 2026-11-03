@@ -1,0 +1,8 @@
+[
+ {"bill_id":"B-1001","vendor_id":"V-ACME","vendor":"Acme Packaging Co","amount":1240.00,"currency":"USD","due":"2026-11-10","country":"US"},
+ {"bill_id":"B-1002","vendor_id":"V-NORTH","vendor":"Northwind Wholesale","amount":3875.50,"currency":"USD","due":"2026-11-12","country":"US"},
+ {"bill_id":"B-1003","vendor_id":"V-BLUE","vendor":"Bluebird Logistics","amount":615.25,"currency":"USD","due":"2026-11-05","country":"GB"},
+ {"bill_id":"B-1004","vendor_id":"V-FRESH","vendor":"FreshShelf Produce","amount":980.00,"currency":"USD","due":"2026-11-07","country":"US"},
+ {"bill_id":"B-1005","vendor_id":"V-PIXEL","vendor":"Pixel POS Systems","amount":7200.00,"currency":"USD","due":"2026-11-20","country":"US"},
+ {"bill_id":"B-1006","vendor_id":"V-CRATE","vendor":"CrateWorks Fixtures","amount":450.00,"currency":"USD","due":"2026-11-09","country":"SG"}
+]

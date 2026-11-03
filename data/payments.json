@@ -1,0 +1,7 @@
+[
+ {"payment_id":"P-501","vendor_id":"V-ACME","amount":1240.00,"ref":"B-1001","date":"2026-11-01"},
+ {"payment_id":"P-502","vendor_id":"V-NORTH","amount":3785.50,"ref":"B-1002","date":"2026-11-01"},
+ {"payment_id":"P-503","vendor_id":"V-BLUE","amount":615.25,"ref":"B-1003","date":"2026-11-02"},
+ {"payment_id":"P-504","vendor_id":"V-BLUE","amount":615.25,"ref":"B-1003","date":"2026-11-02"},
+ {"payment_id":"P-505","vendor_id":"V-GHOST","amount":2100.00,"ref":"","date":"2026-11-02"}
+]

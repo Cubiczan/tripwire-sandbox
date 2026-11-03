@@ -1,0 +1,202 @@
+LLM mode: mock
+
+== recon: attempts=1 ok=True
+{
+ "matched": [
+  "B-1001",
+  "B-1003"
+ ],
+ "mismatched": [
+  {
+   "bill_id": "B-1002",
+   "billed": 3875.5,
+   "paid": 3785.5,
+   "short_by": 90.0
+  }
+ ],
+ "duplicates": [
+  {
+   "payment_id": "P-504",
+   "duplicate_of": "P-503"
+  }
+ ],
+ "unmatched_payments": [
+  "P-505"
+ ],
+ "unpaid_bills": [
+  "B-1004",
+  "B-1005",
+  "B-1006"
+ ],
+ "proposed_payments": [
+  {
+   "bill_id": "B-1004",
+   "vendor_id": "V-FRESH",
+   "amount": 980.0,
+   "country": "US",
+   "reason": "unpaid_bill"
+  },
+  {
+   "bill_id": "B-1005",
+   "vendor_id": "V-PIXEL",
+   "amount": 7200.0,
+   "country": "US",
+   "reason": "unpaid_bill"
+  },
+  {
+   "bill_id": "B-1006",
+   "vendor_id": "V-CRATE",
+   "amount": 450.0,
+   "country": "SG",
+   "reason": "unpaid_bill"
+  },
+  {
+   "bill_id": "B-1002",
+   "vendor_id": "V-NORTH",
+   "amount": 90.0,
+   "country": "US",
+   "reason": "short_payment_topup"
+  }
+ ]
+}
+
+== retry: attempts=2 ok=True
+{
+ "matched": [
+  "B-1001",
+  "B-1003"
+ ],
+ "mismatched": [
+  {
+   "bill_id": "B-1002",
+   "billed": 3875.5,
+   "paid": 3785.5,
+   "short_by": 90.0
+  }
+ ],
+ "duplicates": [
+  {
+   "payment_id": "P-504",
+   "duplicate_of": "P-503"
+  }
+ ],
+ "unmatched_payments": [
+  "P-505"
+ ],
+ "unpaid_bills": [
+  "B-1004",
+  "B-1005",
+  "B-1006"
+ ],
+ "proposed_payments": [
+  {
+   "bill_id": "B-1004",
+   "vendor_id": "V-FRESH",
+   "amount": 980.0,
+   "country": "US",
+   "reason": "unpaid_bill"
+  },
+  {
+   "bill_id": "B-1005",
+   "vendor_id": "V-PIXEL",
+   "amount": 7200.0,
+   "country": "US",
+   "reason": "unpaid_bill"
+  },
+  {
+   "bill_id": "B-1006",
+   "vendor_id": "V-CRATE",
+   "amount": 450.0,
+   "country": "SG",
+   "reason": "unpaid_bill"
+  },
+  {
+   "bill_id": "B-1002",
+   "vendor_id": "V-NORTH",
+   "amount": 90.0,
+   "country": "US",
+   "reason": "short_payment_topup"
+  }
+ ]
+}
+
+== escape: attempts=1 ok=True
+{
+ "containment_probes": {
+  "dns_lookup": {
+   "blocked": true,
+   "detail": "gaierror: [Errno -3] Temporary failure in name resolution"
+  },
+  "tcp_connect_1.1.1.1:443": {
+   "blocked": true,
+   "detail": "OSError: [Errno 101] Network is unreachable"
+  },
+  "http_exfil": {
+   "blocked": true,
+   "detail": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>"
+  },
+  "env_secrets": {
+   "blocked": true,
+   "detail": "secret-like env vars visible: none"
+  },
+  "read_secret_files": {
+   "blocked": true,
+   "detail": "FileNotFoundError: no secret files or docker socket in sandbox"
+  },
+  "write_root_fs": {
+   "blocked": true,
+   "detail": "OSError: [Errno 30] Read-only file system: '/etc/evil'"
+  }
+ }
+}
+
+== forkbomb: attempts=1 ok=True
+{
+ "containment_probes": {
+  "fork_bomb": {
+   "blocked": true,
+   "detail": "blocked after 63: BlockingIOError"
+  }
+ }
+}
+
+== hang: attempts=1 ok=False
+null
+
+== audit log
+{"ts": "2026-11-03T08:42:40", "kind": "task_start", "task_id": "ced37853", "scenario": "recon", "llm_mode": "mock"}
+{"ts": "2026-11-03T08:42:41", "kind": "sandbox_run", "task_id": "ced37853", "attempt": 1, "container": "tw-sbx-091dd63da611", "exit_code": 0, "timed_out": false, "destroyed": true}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "2fdbb57c", "bill_id": "B-1004", "amount": 980.0, "policy": "allow"}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "150628bd", "bill_id": "B-1005", "amount": 7200.0, "policy": "deny"}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "cdf65d1e", "bill_id": "B-1006", "amount": 450.0, "policy": "allow"}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "a9c2ec01", "bill_id": "B-1002", "amount": 90.0, "policy": "allow"}
+{"ts": "2026-11-03T08:42:41", "kind": "task_end", "task_id": "ced37853", "ok": true}
+{"ts": "2026-11-03T08:42:41", "kind": "task_start", "task_id": "329daede", "scenario": "retry", "llm_mode": "mock"}
+{"ts": "2026-11-03T08:42:41", "kind": "sandbox_run", "task_id": "329daede", "attempt": 1, "container": "tw-sbx-13121e6d1d06", "exit_code": 1, "timed_out": false, "destroyed": true}
+{"ts": "2026-11-03T08:42:41", "kind": "retry", "task_id": "329daede", "attempt": 1, "error": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"agent_code.py\", line 3, in <module>\nKeyError: 'bill'\n"}
+{"ts": "2026-11-03T08:42:41", "kind": "sandbox_run", "task_id": "329daede", "attempt": 2, "container": "tw-sbx-e2a6732198ad", "exit_code": 0, "timed_out": false, "destroyed": true}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "0235ea47", "bill_id": "B-1004", "amount": 980.0, "policy": "allow"}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "6598021a", "bill_id": "B-1005", "amount": 7200.0, "policy": "deny"}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "53e8d3fe", "bill_id": "B-1006", "amount": 450.0, "policy": "allow"}
+{"ts": "2026-11-03T08:42:41", "kind": "payment_proposed", "approval_id": "fe532221", "bill_id": "B-1002", "amount": 90.0, "policy": "allow"}
+{"ts": "2026-11-03T08:42:41", "kind": "task_end", "task_id": "329daede", "ok": true}
+{"ts": "2026-11-03T08:42:41", "kind": "task_start", "task_id": "c80fecaf", "scenario": "escape", "llm_mode": "mock"}
+{"ts": "2026-11-03T08:42:41", "kind": "static_flags", "task_id": "c80fecaf", "attempt": 1, "patterns": ["socket", "urllib", "os.environ", "/etc/", ".env", "docker.sock"]}
+{"ts": "2026-11-03T08:42:42", "kind": "sandbox_run", "task_id": "c80fecaf", "attempt": 1, "container": "tw-sbx-1cbb84f0a981", "exit_code": 0, "timed_out": false, "destroyed": true}
+{"ts": "2026-11-03T08:42:42", "kind": "containment_blocked", "task_id": "c80fecaf", "probe": "dns_lookup", "detail": "gaierror: [Errno -3] Temporary failure in name resolution"}
+{"ts": "2026-11-03T08:42:42", "kind": "containment_blocked", "task_id": "c80fecaf", "probe": "tcp_connect_1.1.1.1:443", "detail": "OSError: [Errno 101] Network is unreachable"}
+{"ts": "2026-11-03T08:42:42", "kind": "containment_blocked", "task_id": "c80fecaf", "probe": "http_exfil", "detail": "URLError: <urlopen error [Errno -3] Temporary failure in name resolution>"}
+{"ts": "2026-11-03T08:42:42", "kind": "containment_blocked", "task_id": "c80fecaf", "probe": "env_secrets", "detail": "secret-like env vars visible: none"}
+{"ts": "2026-11-03T08:42:42", "kind": "containment_blocked", "task_id": "c80fecaf", "probe": "read_secret_files", "detail": "FileNotFoundError: no secret files or docker socket in sandbox"}
+{"ts": "2026-11-03T08:42:42", "kind": "containment_blocked", "task_id": "c80fecaf", "probe": "write_root_fs", "detail": "OSError: [Errno 30] Read-only file system: '/etc/evil'"}
+{"ts": "2026-11-03T08:42:42", "kind": "task_end", "task_id": "c80fecaf", "ok": true}
+{"ts": "2026-11-03T08:42:42", "kind": "task_start", "task_id": "b6015e42", "scenario": "forkbomb", "llm_mode": "mock"}
+{"ts": "2026-11-03T08:42:42", "kind": "static_flags", "task_id": "b6015e42", "attempt": 1, "patterns": ["fork"]}
+{"ts": "2026-11-03T08:42:43", "kind": "sandbox_run", "task_id": "b6015e42", "attempt": 1, "container": "tw-sbx-92b9ce55ed70", "exit_code": 0, "timed_out": false, "destroyed": true}
+{"ts": "2026-11-03T08:42:43", "kind": "containment_blocked", "task_id": "b6015e42", "probe": "fork_bomb", "detail": "blocked after 63: BlockingIOError"}
+{"ts": "2026-11-03T08:42:43", "kind": "task_end", "task_id": "b6015e42", "ok": true}
+{"ts": "2026-11-03T08:42:43", "kind": "task_start", "task_id": "da65d1e7", "scenario": "hang", "llm_mode": "mock"}
+{"ts": "2026-11-03T08:42:58", "kind": "sandbox_run", "task_id": "da65d1e7", "attempt": 1, "container": "tw-sbx-5d9deef04abe", "exit_code": 124, "timed_out": true, "destroyed": true}
+{"ts": "2026-11-03T08:42:58", "kind": "retry", "task_id": "da65d1e7", "attempt": 1, "error": "sandbox timeout after 15s"}
+{"ts": "2026-11-03T08:42:58", "kind": "containment_blocked", "task_id": "da65d1e7", "probe": "runaway_cpu_timeout", "detail": "killed at timeout, container removed"}
+{"ts": "2026-11-03T08:42:58", "kind": "task_end", "task_id": "da65d1e7", "ok": false}
