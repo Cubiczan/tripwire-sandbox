@@ -4,7 +4,9 @@
 
 Built for **Vultr Agent Rush (lablab.ai), Blast Radius Zero track**.
 
-> **Status, honestly:** everything below runs locally. The LLM currently runs in **offline MOCK mode** (canned, deterministic code) because no Vultr Inference key exists yet. The live path is wired to Vultr Serverless Inference and switches on as soon as `VULTR_INFERENCE_API_KEY` is set. It has **not** been run against Vultr yet. The Vultr VM deploy script is written but **not yet run**.
+> **Status, honestly (submitted in MOCK mode):** the demo runs in **offline MOCK LLM mode** (canned, deterministic model output). The Vultr Serverless Inference integration (`app/llm.py`) and the Vultr VM deploy script (`deploy/deploy_vultr.sh`) are **implemented but were not run live, because no Vultr credit was available.** This app is **not deployed on Vultr.**
+>
+> **Live demo (free Vercel host):** https://tripwire-sandbox.vercel.app. Vercel has no Docker, so the hosted demo runs in **SANDBOX: REPLAY** mode: the sandbox results are replayed from a recorded real local Docker run of the same deterministic mock code (`data/sandbox_replay.json`), and the UI labels this. The policy gate and approval queue run live. The audit log is in memory per serverless instance, so it may reset. For real per-task containers, run it locally with Docker (below).
 
 ## Use case
 A CFO's AP team reconciles vendor bills against payments every week. An LLM agent can write that reconciliation code on the fly, but code written by a model is untrusted. It could be wrong, prompt-injected through vendor data, or simply runaway. Tripwire Sandbox keeps the blast radius at zero:
@@ -18,8 +20,8 @@ The sample data (`data/`) covers retail and distribution vendors (packaging, who
 ## Vultr services used
 | Service | How | Status |
 |---|---|---|
-| **Vultr Serverless Inference** | Every LLM call goes through the OpenAI-compatible client at `https://api.vultrinference.com/v1` (`app/llm.py`), key from `VULTR_INFERENCE_API_KEY`, model set by `VULTR_MODEL` | Wired; **not yet called live** (no key yet) |
-| **Vultr Cloud Compute (Ubuntu VM)** | Hosts the app and the sandbox containers with Docker Compose (`deploy/deploy_vultr.sh`) | Script written; **not yet run** |
+| **Vultr Serverless Inference** | Every LLM call goes through the OpenAI-compatible client at `https://api.vultrinference.com/v1` (`app/llm.py`), key from `VULTR_INFERENCE_API_KEY`, model set by `VULTR_MODEL` | Implemented; **not run live** (no Vultr credit) |
+| **Vultr Cloud Compute (Ubuntu VM)** | Hosts the app and the sandbox containers with Docker Compose (`deploy/deploy_vultr.sh`) | Script written; **not run** (no Vultr credit) |
 
 ## Architecture
 ```
@@ -75,12 +77,15 @@ python3 -m pytest -q                  # 14 tests; Docker-backed tests skip if Do
 ```
 Live mode: `cp .env.example .env`, set `VULTR_INFERENCE_API_KEY`, then export it before starting.
 
-## Deploy to Vultr (once the account exists)
+## Deploy to Vultr (not run: no Vultr credit was available)
 Create an Ubuntu 24.04 Cloud Compute VM, SSH in, then:
 ```bash
 git clone https://github.com/Cubiczan/tripwire-sandbox && cd tripwire-sandbox
 bash deploy/deploy_vultr.sh   # installs Docker, docker compose up -d --build, serves on :80
 ```
+
+## Submission assets
+Cover image, slides (PDF) and a 3-minute demo video (recorded against a local run with real Docker, MOCK LLM) are attached to the lablab submission.
 
 ## Limitations
 - MOCK LLM until a Vultr key is issued. Live model output may need prompt tuning.
